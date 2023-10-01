@@ -4,15 +4,9 @@ import { Card } from "./objects/card"
 import { Player } from "./entities/player"
 import { GameObject, RenderableObject } from "./objects/object"
 import { Event } from "./interfaces/event"
-import { ClickEvent, ClickEventHandler, MouseAction, MouseButton } from "./events/ClickEvent"
+import { ClickEventHandler } from "./events/ClickEvent"
 import { SelectEventHandler } from "./events/SelectEvent"
-
-
-
-type EventListener = {
-  type: string
-  listener: (e: any) => any
-}
+import { ECSTest } from "./test"
 
 export class App {
 
@@ -26,8 +20,6 @@ export class App {
   objects: GameObject[]
   eventHandlers: EventHandler[]
 
-  domEventListeners: EventListener[]
-
   constructor() {
     const fov = 90
     const near = 0.1
@@ -39,9 +31,13 @@ export class App {
     this.renderer = new THREE.WebGLRenderer()
     this.renderer.setSize(innerWidth, innerHeight)
 
-    document.body.appendChild(this.renderer.domElement)
+    document.body.appendChild(this.element)
 
     //
+
+    // this.controllers = []
+    // this.controllers.push(new OrbitController(this.camera, this.element))
+    // this.controllers.push(new InputController(this.element))
 
     this.objects = []
     this.objects.push(new Player(this))
@@ -49,34 +45,10 @@ export class App {
     this.eventHandlers = []
     this.eventHandlers.push(new ClickEventHandler(this))
     this.eventHandlers.push(new SelectEventHandler(this))
-
-    //
-
-
-    this.domEventListeners = [
-      { type: "mousedown", listener: e => this.MouseDown(e) },
-      { type: "mouseup",   listener: e => this.MouseUp(e) }
-    ]
   }
 
-  MouseDown(e: MouseEvent) {
-    this.Broadcast(
-      new ClickEvent(
-        MouseAction.DOWN, 
-        e.button as MouseButton, 
-        new THREE.Vector2(e.clientX, e.clientY)
-      )
-    )
-  }
-
-  MouseUp(e: MouseEvent) {
-    this.Broadcast(
-      new ClickEvent(
-        MouseAction.UP, 
-        e.button as MouseButton, 
-        new THREE.Vector2(e.clientX, e.clientY)
-      )
-    )
+  get element() {
+    return this.renderer.domElement
   }
 
   AddObject(obj: GameObject) {
@@ -84,6 +56,14 @@ export class App {
 
     if(obj instanceof RenderableObject) {
       this.scene.add(obj.mesh)
+    }
+  }
+
+  RemoveObject(obj: GameObject) {
+    this.objects = this.objects.filter(x => x.id != obj.id)
+    
+    if(obj instanceof RenderableObject) {
+      this.scene.remove(obj.mesh)
     }
   }
 
@@ -122,10 +102,6 @@ export class App {
     this.renderer.setAnimationLoop(() => this.Loop())
 
     const element = this.renderer.domElement
-
-    for(const e of this.domEventListeners) {
-      element.addEventListener(e.type, e.listener)
-    }
   }
 
   Dispose() {
@@ -133,12 +109,6 @@ export class App {
 
     this.objects.forEach(x => x.dispose)
     this.eventHandlers.forEach(x => x.dispose())
-
-    const element = this.renderer.domElement
-
-    for(const e of this.domEventListeners) {
-      element.removeEventListener(e.type, e.listener)
-    }
   }
 
   Loop() {
@@ -162,5 +132,6 @@ window.oncontextmenu = () => {
 }
 
 window.onload = () => {
+  new ECSTest().run()
   new App().Start()
 }
