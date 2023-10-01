@@ -36,11 +36,8 @@ export class SelectController implements Disposable {
 
         const intersections = this.raycaster.intersectObjects(this.scene.children)
 
-        console.log(intersections.length);
-
         for (const obj of intersections) {
             const data = obj.object.userData as UserData
-            console.log(data);
         }
     }
 

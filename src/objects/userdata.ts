@@ -1,4 +1,3 @@
 export type UserData = {
-    name: string;
-    object: object;
+    id: number;
 }
