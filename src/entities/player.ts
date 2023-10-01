@@ -1,4 +1,4 @@
-import { OrbitController } from "../controllers/orbitcontroller";
+import { OrbitController } from "../controllers/orbitController";
 import { App } from "../main";
 import { GameObject } from "../objects/object";
 

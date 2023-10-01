@@ -1,6 +1,6 @@
 import { Mesh } from "three"
 import { IDisposable } from "../interfaces/disposable"
-import { UserData } from "./userdata"
+import { UserData } from "./userData"
 
 export abstract class GameObject implements IDisposable {
     private static _LAST_ID = 0

@@ -1,11 +1,8 @@
 import * as THREE from "three"
-import { EventHandler } from "./interfaces/eventhandler"
 import { Card } from "./objects/card"
 import { Player } from "./entities/player"
 import { GameObject, RenderableObject } from "./objects/object"
 import { Event } from "./interfaces/event"
-import { ClickEventHandler } from "./events/clickevent"
-import { SelectEventHandler } from "./events/selectevent"
 import { ECSTest } from "./test"
 
 export class App {
@@ -18,7 +15,6 @@ export class App {
   scene: THREE.Scene
 
   objects: GameObject[]
-  eventHandlers: EventHandler[]
 
   constructor() {
     const fov = 90
@@ -41,10 +37,6 @@ export class App {
 
     this.objects = []
     this.objects.push(new Player(this))
-
-    this.eventHandlers = []
-    this.eventHandlers.push(new ClickEventHandler(this))
-    this.eventHandlers.push(new SelectEventHandler(this))
   }
 
   get element() {
@@ -68,11 +60,11 @@ export class App {
   }
 
   Broadcast(event: Event) {
-    for(const handler of this.eventHandlers) {
-      if(event.layer == handler.mask) {
-        handler.handle(event)
-      }
-    }
+    // for(const handler of this.eventHandlers) {
+    //   if(event.layer == handler.mask) {
+    //     handler.handle(event)
+    //   }
+    // }
   }
 
   Start() {
@@ -100,15 +92,13 @@ export class App {
 
     this.clock.start()
     this.renderer.setAnimationLoop(() => this.Loop())
-
-    const element = this.renderer.domElement
   }
 
   Dispose() {
     this.clock.stop()
 
     this.objects.forEach(x => x.dispose)
-    this.eventHandlers.forEach(x => x.dispose())
+    // this.eventHandlers.forEach(x => x.dispose())
   }
 
   Loop() {

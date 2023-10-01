@@ -1,6 +1,6 @@
 import { Raycaster, Vector2 } from "three";
 import { Disposable } from "../interfaces/disposable";
-import { UserData } from "../objects/userdata";
+import { UserData } from "../objects/userData";
 
 export class SelectController implements Disposable {
 

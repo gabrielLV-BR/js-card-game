@@ -1,8 +1,8 @@
 import { Vector3 } from "three"
 import { clamp, degToRad } from "three/src/math/MathUtils.js"
-import { Disposable } from "../interfaces/disposable"
+import { IDisposable } from "../interfaces/disposable"
 
-export class OrbitController implements Disposable {
+export class OrbitController implements IDisposable {
 
     private _vectorBuff = new Vector3()
 

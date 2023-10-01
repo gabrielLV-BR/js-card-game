@@ -1,6 +1,5 @@
 import { Event } from "../interfaces/event";
-import { EventHandler } from "../interfaces/eventhandler";
-import { App } from "../main";
+import { EventHandler } from "../interfaces/eventHandler";
 
 const InteractEventLayer = "ACTION"
 
