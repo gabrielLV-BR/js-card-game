@@ -5,7 +5,7 @@ import { App } from "../main";
 
 import { Raycaster } from "three";
 import { UserData } from "../objects/userdata";
-import { SelectEvent, SelectionType } from "./SelectEvent";
+import { SelectEvent, SelectionType } from "./selectevent";
 
 const LAYER = "Click"
 

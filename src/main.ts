@@ -4,8 +4,8 @@ import { Card } from "./objects/card"
 import { Player } from "./entities/player"
 import { GameObject, RenderableObject } from "./objects/object"
 import { Event } from "./interfaces/event"
-import { ClickEventHandler } from "./events/ClickEvent"
-import { SelectEventHandler } from "./events/SelectEvent"
+import { ClickEventHandler } from "./events/clickevent"
+import { SelectEventHandler } from "./events/selectevent"
 import { ECSTest } from "./test"
 
 export class App {

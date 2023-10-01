@@ -39,11 +39,11 @@ export class SelectEventHandler extends EventHandler {
         switch (event.selectionType) {
             
             case SelectionType.REPLACE:
-                this.selection = event.ids                   
+                this.selection = event.ids
                 break;
 
             case SelectionType.ADD:
-                this.selection.concat(event.ids)
+                this.selection = this.selection.concat(event.ids)
                 break;
 
             case SelectionType.SUBTRACT:
