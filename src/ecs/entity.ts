@@ -1,3 +1,10 @@
+import { Component } from "./component"
+import { World } from "./world"
+
+type Bunda<T> = (new() => T)
+
+interface SuperInterface<T> extends Component, Bunda<T> {}
+
 export class Entity {
 
     private components: Map<number, Component> = new Map()
@@ -6,9 +13,7 @@ export class Entity {
     constructor(
         public readonly id: number,
         private world: World
-    ) {
-
-    }
+    ) {}
 
     addComponent<T extends Component>(component: T) {
         const componentBit = this.world.getComponentBit(component) ?? this.world.registerComponent(component)
@@ -28,12 +33,9 @@ export class Entity {
         this.components.delete(componentBit)
     }
 
-    getComponent<T extends Component>(name: string): T {
-        // assumes component has been checked to be here
-
-        const componentBit = this.world.getComponentBit(name)!
+    getComponent<T extends Component>(c: { new(): T }) {
+        const componentBit = this.world.getComponentBit(c.name)!
         const component = this.components.get(componentBit)!
-
         return component as T
     }
 

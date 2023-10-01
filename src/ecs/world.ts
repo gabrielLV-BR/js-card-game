@@ -18,14 +18,14 @@ export class World {
         this.componentMapping = new Map()
     }
 
-    registerComponent(component: typeof Component | Component): number {
-        const componentBit = this.componentMapping.size
+    registerComponent(component: Component): number {
+        const componentBit = this.componentMapping.size + 1
         this.componentMapping.set(component.name, componentBit)
 
         return componentBit
     }
 
-    getComponentBit(component: typeof Component | Component | string) {
+    getComponentBit(component: Component | string) {
         return this.componentMapping.get(typeof(component) == "string" ? component : component.name)
     }
 

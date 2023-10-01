@@ -1,12 +1,11 @@
-import { Component } from "./component"
 import { Entity } from "./entity"
 import { World } from "./world"
 
 export class Query {
-    components: string[] | (typeof Component)[]
+    components: string[]
 
-    constructor(...components: string[] | (typeof Component)[]) {
-        this.components = components
+    constructor(...components: (any&Function)[]) {
+        this.components = components.map(x => x.name)
     }
 }
 
@@ -22,7 +21,7 @@ export abstract class System {
             .map(x => {
                 const bit = this.world.getComponentBit(x)
 
-                if (!bit) throw Error("Querying unregistered component")
+                if (bit == undefined) throw Error("Querying unregistered component")
 
                 return bit
             })
