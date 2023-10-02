@@ -10,17 +10,31 @@ class VelocityComponent extends Component {
     }
 }
 
+class InputResource extends Component {
+
+    keys = {
+        w: true,
+        a: true,
+        s: true,
+        d: true,
+    }
+
+    constructor() {
+        super(InputResource.name);
+    }
+}
+
 class PhysicsSystem extends System {
 
     physicsQuery = new Query(VelocityComponent)
 
+    input = this.getResource(InputResource)
+
     run(delta: number): void {
+
         for(const entity of this.query(this.physicsQuery)) {
             const vel = entity.getComponent(VelocityComponent)
-
             vel.speed += 1
-
-            console.log(vel);
         }
     }
 }
@@ -32,6 +46,7 @@ export class ECSTest {
     constructor() {
         console.log("Initializing test");
 
+        this.world.registerResource(InputResource)
         this.world.registerComponent(VelocityComponent)
 
         let player = this.world.createEntity()

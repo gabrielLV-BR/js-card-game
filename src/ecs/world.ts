@@ -12,10 +12,25 @@ export class World {
 
     entities: Entity[] = []
     systems: System[] = []
+
+    resourceMapping: Map<string, Component>
     componentMapping: Map<string, number>
 
     constructor() {
+        this.resourceMapping  = new Map()
         this.componentMapping = new Map()
+    }
+
+    registerResource<T extends Component>(resource: T | { new(): T }) {
+        this.resourceMapping.set(resource.name, resource)
+    }
+
+    getResource<T extends Component>(resource: { new(): T }) {
+        const res = this.resourceMapping.get(resource.name)
+
+        if (res == undefined) throw Error("Query for unregistered resource")
+
+        return res as Component
     }
 
     registerComponent(component: Component): number {

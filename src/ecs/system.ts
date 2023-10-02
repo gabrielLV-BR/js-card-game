@@ -1,3 +1,4 @@
+import { Component } from "./component"
 import { Entity } from "./entity"
 import { World } from "./world"
 
@@ -15,6 +16,10 @@ export abstract class System {
     ) {}
 
     abstract run(delta: number): void
+
+    getResource<T extends Component>(res: { new() : T }) : T {
+        return this.world.getResource(res) as T
+    }
 
     *query(q: Query): Generator<Entity> {
         const queryBitset = q.components

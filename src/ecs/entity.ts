@@ -1,10 +1,6 @@
 import { Component } from "./component"
 import { World } from "./world"
 
-type Bunda<T> = (new() => T)
-
-interface SuperInterface<T> extends Component, Bunda<T> {}
-
 export class Entity {
 
     private components: Map<number, Component> = new Map()
