@@ -34,9 +34,13 @@ class PhysicsSystem extends System {
 
         for(const entity of this.query(this.physicsQuery)) {
             const vel = entity.getComponent(VelocityComponent)
+
             vel.speed += 1
+            console.log(vel);
         }
     }
+
+    dispose(): void {}
 }
 
 export class ECSTest {

@@ -1,3 +1,4 @@
+import { IDisposable } from "../interfaces/disposable"
 import { Component } from "./component"
 import { Entity } from "./entity"
 import { World } from "./world"
@@ -10,7 +11,7 @@ export class Query {
     }
 }
 
-export abstract class System {
+export abstract class System implements IDisposable{
     constructor(
         private world: World,
     ) {}
@@ -38,4 +39,6 @@ export abstract class System {
             }
         }
     }
+
+    abstract dispose(): void
 }
