@@ -29,7 +29,7 @@ export class Entity {
         this.components.delete(componentBit)
     }
 
-    getComponent<T extends Component>(c: { new(): T }) {
+    getComponent<T extends Component>(c: { new(...args: any): T }) {
         const componentBit = this.world.getComponentBit(c.name)!
         const component = this.components.get(componentBit)!
         return component as T

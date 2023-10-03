@@ -56,7 +56,7 @@ export class ECSTest {
         let player = this.world.createEntity()
         player.addComponent(new VelocityComponent())
 
-        this.world.addSystem(PhysicsSystem)
+        this.world.registerSystem(PhysicsSystem)
 
         console.log(this.world);
         

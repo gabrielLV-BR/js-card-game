@@ -1,9 +1,11 @@
 import * as THREE from "three"
-import { Card } from "./objects/card"
-import { Player } from "./entities/player"
-import { GameObject, RenderableObject } from "./objects/object"
-import { Event } from "./interfaces/event"
 import { ECSTest } from "./test"
+import { World } from "./ecs/world"
+import { InputResource } from "./resources/inputResource"
+import { OrbitComponent } from "./components/orbitComponent"
+import { CameraComponent } from "./components/cameraComponent"
+import { InputSystem } from "./systems/inputSystem"
+import { OrbitSystem } from "./systems/orbitSystem"
 
 export class App {
 
@@ -14,7 +16,7 @@ export class App {
   renderer: THREE.WebGLRenderer
   scene: THREE.Scene
 
-  objects: GameObject[]
+  world: World
 
   constructor() {
     const fov = 90
@@ -31,52 +33,32 @@ export class App {
 
     //
 
-    // this.controllers = []
-    // this.controllers.push(new OrbitController(this.camera, this.element))
-    // this.controllers.push(new InputController(this.element))
+    this.world = new World()
 
-    this.objects = []
-    this.objects.push(new Player(this))
+    this.world.registerResource(InputResource)
+
+    const player = this.world.createEntity()
+    player.addComponent(new OrbitComponent())
+    player.addComponent(new CameraComponent(this.camera))
+
+    this.world.registerSystem(InputSystem, this.element)
+    this.world.registerSystem(OrbitSystem)
   }
 
   get element() {
     return this.renderer.domElement
   }
 
-  AddObject(obj: GameObject) {
-    this.objects.push(obj)
-
-    if(obj instanceof RenderableObject) {
-      this.scene.add(obj.mesh)
-    }
-  }
-
-  RemoveObject(obj: GameObject) {
-    this.objects = this.objects.filter(x => x.id != obj.id)
-    
-    if(obj instanceof RenderableObject) {
-      this.scene.remove(obj.mesh)
-    }
-  }
-
-  Broadcast(event: Event) {
-    // for(const handler of this.eventHandlers) {
-    //   if(event.layer == handler.mask) {
-    //     handler.handle(event)
-    //   }
-    // }
-  }
-
   Start() {
-    for(let i = 0; i < 10; i++) {
-      const card = new Card()
-      card.mesh.position.x = Math.random() * 5
-      card.mesh.position.z = Math.random() * 5
+    // for(let i = 0; i < 10; i++) {
+    //   const card = new Card()
+    //   card.mesh.position.x = Math.random() * 5
+    //   card.mesh.position.z = Math.random() * 5
 
-      card.mesh.rotateY(Math.random() * Math.PI)
+    //   card.mesh.rotateY(Math.random() * Math.PI)
 
-      this.AddObject(card)
-    }
+    //   this.AddObject(card)
+    // }
 
     //
 
@@ -97,16 +79,18 @@ export class App {
   Dispose() {
     this.clock.stop()
 
-    this.objects.forEach(x => x.dispose)
+    // this.objects.forEach(x => x.dispose)
     // this.eventHandlers.forEach(x => x.dispose())
   }
 
   Loop() {
     const delta = this.clock.getDelta()
 
-    for(const obj of this.objects) {
-      obj.update(delta)
-    }
+    // for(const obj of this.objects) {
+    //   obj.update(delta)
+    // }
+
+    this.world.runSystems(delta)
 
     this.renderer.render(this.scene, this.camera)
   }

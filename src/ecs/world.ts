@@ -21,8 +21,8 @@ export class World {
         this.componentMapping = new Map()
     }
 
-    registerResource<T extends Component>(resource: T | { new(): T }) {
-        this.resourceMapping.set(resource.name, resource)
+    registerResource<T extends Component>(resource: { new(): T }) {
+        this.resourceMapping.set(resource.name, new resource())
     }
 
     getResource<T extends Component>(resource: { new(): T }) {
@@ -52,8 +52,8 @@ export class World {
         return entity
     }
 
-    addSystem<T extends System>(system: { new(world: World): T }) {
-        this.systems.push(new system(this))
+    registerSystem<T extends System>(system: { new(world: World, ...args: any): T }, ...args: any) {
+        this.systems.push(new system(this, args))
     }
 
     runSystems(delta: number) {
