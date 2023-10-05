@@ -11,6 +11,14 @@ export class Query {
     }
 }
 
+export interface IRefreshable {
+    refresh() : void 
+}
+
+export function isIRefreshable(obj: object): boolean {
+    return (obj as IRefreshable).refresh !== undefined
+}
+
 export abstract class System implements IDisposable{
     constructor(
         private world: World,

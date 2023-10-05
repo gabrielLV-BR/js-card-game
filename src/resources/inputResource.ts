@@ -24,6 +24,11 @@ export class MouseState {
     updateWheelFromEvent(e: WheelEvent) {
         this.wheelDelta.set(e.deltaX, e.deltaY)
     }
+
+    clearMovement() {
+        this.delta.set(0, 0)
+        this.wheelDelta.set(0, 0)
+    }
 }
 
 export type InputSystemContructorType = {

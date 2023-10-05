@@ -6,12 +6,14 @@
 
 import { Entity } from "./entity"
 import { Component } from "./component"
-import { System } from "./system"
+import { IRefreshable, System, isIRefreshable } from "./system"
 
 export class World {
 
     entities: Entity[] = []
+
     systems: System[] = []
+    systemsToRefresh: IRefreshable[] = []
 
     resourceMapping: Map<string, Component>
     componentMapping: Map<string, number>
@@ -53,10 +55,18 @@ export class World {
     }
 
     registerSystem<T extends System>(system: { new(world: World, ...args: any): T }, ...args: any) {
+        const s = new system(this, args)
+
+        if(isIRefreshable(s)) {
+            // unfortunate type erasure, but we know it is refreshable and ts don't
+            this.systemsToRefresh.push(s as any)
+        }
+
         this.systems.push(new system(this, args))
     }
 
     runSystems(delta: number) {
         for(const system of this.systems) system.run(delta)
+        for(const system of this.systemsToRefresh) system.refresh()
     }
 }

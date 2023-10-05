@@ -1,8 +1,8 @@
-import { System } from "../ecs/system"
+import { IRefreshable, System } from "../ecs/system"
 import { World } from "../ecs/world"
 import { InputResource } from "../resources/inputResource"
 
-export class InputSystem extends System {
+export class InputSystem extends System implements IRefreshable {
 
     resource = this.getResource(InputResource)
     
@@ -32,6 +32,10 @@ export class InputSystem extends System {
     }
 
     run(_delta: number): void {}
+
+    refresh(): void {
+        this.resource.mouse.clearMovement()
+    }
 
     dispose() {
         for(const { type, listener } of this.events) {
