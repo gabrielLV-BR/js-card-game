@@ -1,24 +1,28 @@
 import { Vector2 } from "three"
 import { Component } from "../ecs/component"
 
-export type KeyState = "up" | "down"
+export enum MouseButton {
+    LEFT = 1,
+    RIGHT = 2,
+    MIDDLE = 4,
+}
 
 export class MouseState {
     position = new Vector2()
+    buttonState = 0
     delta = new Vector2()
     wheelDelta = new Vector2()
 
-    state: KeyState = "down"
-
     constructor() {}
 
-    updateFromEvent(e: MouseEvent, action: KeyState | null = null) {
+    isButtonPressed(button: MouseButton) {
+        return this.buttonState & button
+    }
+
+    updateFromEvent(e: MouseEvent) {
         this.position.set(e.clientX, e.clientY)
         this.delta.set(e.movementX, e.movementY)
-
-        if (action != null) {
-            this.state = action
-        } 
+        this.buttonState = e.buttons
     }
 
     updateWheelFromEvent(e: WheelEvent) {
@@ -47,14 +51,10 @@ export class InputResource extends Component {
     
     refresh() {
         // called every end of update
-        console.log("Refreshing");
-        
         this.mouse.wheelDelta.set(0, 0)
     }
 
     wheel(e: WheelEvent) {
-        console.log(e);
-        
         this.mouse.updateWheelFromEvent(e)
     }
 
@@ -66,15 +66,7 @@ export class InputResource extends Component {
         this.keys.set(e.key.toLowerCase(), 0.0)
     }
 
-    mouseMove(event: MouseEvent) {
+    mouseEvent(event: MouseEvent) {
         this.mouse.updateFromEvent(event)
-    }
-
-    mouseDown(event: MouseEvent) {
-        this.mouse.updateFromEvent(event, "down")
-    }
-
-    mouseUp(event: MouseEvent) {
-        this.mouse.updateFromEvent(event, "up")
     }
 }

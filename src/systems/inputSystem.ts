@@ -8,9 +8,9 @@ export class InputSystem extends System implements IRefreshable {
     
     element : HTMLCanvasElement
     events = [
-        { type: "mousedown", listener: (e: any) => this.resource.mouseDown(e) },
-        { type: "mouseup", listener: (e: any) => this.resource.mouseUp(e) },
-        { type: "mousemove", listener: (e: any) => this.resource.mouseMove(e) },
+        { type: "mouseup", listener: (e: any) => this.resource.mouseEvent(e) },
+        { type: "mousedown", listener: (e: any) => this.resource.mouseEvent(e) },
+        { type: "mousemove", listener: (e: any) => this.resource.mouseEvent(e) },
         { type: "keydown", listener: (e: any) => this.resource.keyDown(e) },
         { type: "keyup", listener: (e: any) => this.resource.keyUp(e) },
         { type: "wheel", listener: (e: any) => this.resource.wheel(e) },
@@ -21,8 +21,6 @@ export class InputSystem extends System implements IRefreshable {
         [element] : [HTMLCanvasElement]
     ) {
         super(world)
-
-        console.log(world);
         
         this.element = element
 
