@@ -1,12 +1,55 @@
-// this is my first ECS implementation
-// i am extremely proud of it, although it sucks
-// it's not meant to be hyper performant (or regularly performant)
-// just flexible and easy to use
-
-
 import { Entity } from "./entity"
 import { Component } from "./component"
 import { IRefreshable, System, isIRefreshable } from "./system"
+
+/*
+    This is my first ECS implementation
+    Although I'm proud of it, it objectively sucks
+    
+    ECS is a design architecture that separates a
+        program/game's parts into their most basic
+        forms: data and logic
+
+    Components are data
+    Systems are logic
+    Entities link components
+
+    It's useful to see an ECS as a sort of database
+     ________                       ____________________
+    |_PLAYER_|                     |_Physics Component_|
+    |+ Id    | ----- < has > ----- |* velocity         |
+    |________|                     |* shape            |
+        |                          |___________________|
+     < has >                               |
+        |                               < has >
+     ___|__________________             ___|___
+    |_Controller Component_|           |_ENEMY_|
+    |* gamepad             |           |+ Id   |
+    |______________________|           |_______|
+
+    In this configuration, we could have:
+        - A Physics System, which only cares about the Physics Component
+        - A Controller System, which cares about the Controller and
+            Physics Component
+
+    Player and Enemy share the same Physics System because they both have
+        the Physics Component. Every Entity that has that Component will
+        have its Component processed as well
+
+    Only Player has the Controller Component and, therefore, only the player
+        will be affected. If we put a Controller Component on the Enemy, then
+        he would be affected as well
+
+    And this is why ECS is awesome
+*/
+
+/*
+    The World is where everything gets put together
+    Systems and Entities and its Components, the world
+        "glues" them together and allows each one of them
+        to access eachother on meaningful and controlled
+        ways
+*/
 
 export class World {
 
