@@ -27,7 +27,6 @@ export class OrbitSystem extends System {
     }
 
     updatePosition(orbit: OrbitComponent, cameraComponent: CameraComponent) {
-        const camera = cameraComponent.camera
         const sin = Math.sin
         const cos = Math.cos
 
@@ -44,10 +43,10 @@ export class OrbitSystem extends System {
             )
             .multiplyScalar(orbit.distance)
 
-        camera.position.set(
+        cameraComponent.camera.position.set(
             this._vectorBuff.x, this._vectorBuff.y, this._vectorBuff.z
         )
-        camera.lookAt(0, 0, 0)
+        cameraComponent.camera.lookAt(0, 0, 0)
     }
 
     run(delta: number): void {

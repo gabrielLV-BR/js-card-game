@@ -66,8 +66,9 @@ export class World {
         this.componentMapping = new Map()
     }
 
-    registerResource<T extends Component>(resource: { new(): T }) {
-        this.resourceMapping.set(resource.name, new resource())
+    registerResource<T extends Component>(resource: { new(...args: any): T }, ...args: any) {
+        const res = new resource(this, args)
+        this.resourceMapping.set(res.name, res)
     }
 
     getResource<T extends Component>(resource: { new(): T }) {
@@ -79,7 +80,7 @@ export class World {
     }
 
     registerComponent(component: Component): number {
-        const componentBit = this.componentMapping.size + 1
+        const componentBit = 1 << this.componentMapping.size
         this.componentMapping.set(component.name, componentBit)
 
         return componentBit

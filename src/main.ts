@@ -1,11 +1,13 @@
 import * as THREE from "three"
-import { ECSTest } from "./test"
 import { World } from "./ecs/world"
 import { InputResource } from "./resources/inputResource"
 import { OrbitComponent } from "./components/orbitComponent"
 import { CameraComponent } from "./components/cameraComponent"
 import { InputSystem } from "./systems/inputSystem"
 import { OrbitSystem } from "./systems/orbitSystem"
+import { SceneResource } from "./resources/sceneResource"
+import { CardComponent, CardType } from "./components/cardComponent"
+import { MeshComponent } from "./components/meshComponent"
 
 export class App {
 
@@ -36,6 +38,7 @@ export class App {
     this.world = new World()
 
     this.world.registerResource(InputResource)
+    this.world.registerResource(SceneResource, this.scene)
 
     const player = this.world.createEntity()
     player.addComponent(new OrbitComponent())
@@ -50,17 +53,23 @@ export class App {
   }
 
   Start() {
-    // for(let i = 0; i < 10; i++) {
-    //   const card = new Card()
-    //   card.mesh.position.x = Math.random() * 5
-    //   card.mesh.position.z = Math.random() * 5
 
-    //   card.mesh.rotateY(Math.random() * Math.PI)
+    for(let i = 0; i < 10; i++) {
+      const card = this.world.createEntity()
+      const cardComponent = new CardComponent(CardType.BLACK, "TEST")
 
-    //   this.AddObject(card)
-    // }
+      const geometry = new THREE.BoxGeometry(2, 0.4, 5)
+      geometry.scale(0.2, 0.2, 0.2)
+      
+      const material = new THREE.MeshBasicMaterial({ color: cardComponent.type as string })
 
-    //
+      const meshComponent = new MeshComponent(geometry, material)
+
+      card.addComponent(cardComponent)
+      card.addComponent(meshComponent)
+
+      this.scene.add(meshComponent.mesh)
+    }
 
     const mesh = new THREE.BoxGeometry(10, 1, 10)
     const material = new THREE.MeshBasicMaterial({ color: "rgb(120, 120, 40)" })
@@ -78,17 +87,10 @@ export class App {
 
   Dispose() {
     this.clock.stop()
-
-    // this.objects.forEach(x => x.dispose)
-    // this.eventHandlers.forEach(x => x.dispose())
   }
 
   Loop() {
     const delta = this.clock.getDelta()
-
-    // for(const obj of this.objects) {
-    //   obj.update(delta)
-    // }
 
     this.world.runSystems(delta)
 
@@ -106,6 +108,6 @@ window.oncontextmenu = () => {
 }
 
 window.onload = () => {
-  new ECSTest().run()
+  // new ECSTest().run()
   new App().Start()
 }
