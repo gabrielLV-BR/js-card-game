@@ -32,7 +32,7 @@ export class InputSystem extends System implements IRefreshable {
     run(_delta: number): void {}
 
     refresh(): void {
-        this.resource.mouse.clearMovement()
+        this.resource.mouse.refresh()
     }
 
     dispose() {

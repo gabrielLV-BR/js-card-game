@@ -8,30 +8,52 @@ export enum MouseButton {
 }
 
 export class MouseState {
-    position = new Vector2()
+    private _vecBuff = new Vector2()
+    private _position = new Vector2()
+
+    private _lastButtonState = 0
     buttonState = 0
-    delta = new Vector2()
-    wheelDelta = new Vector2()
+    
+    private _delta = new Vector2()
+    private _wheelDelta = new Vector2()
 
     constructor() {}
+
+    get position() {
+        return this._vecBuff.set(this._position.x, this._position.y)
+    }
+
+    get delta() {
+        return this._vecBuff.set(this._delta.x, this._delta.y)
+    }
+
+    get wheelDelta() {
+        return this._vecBuff.set(this._wheelDelta.x, this._wheelDelta.y)
+    }
 
     isButtonPressed(button: MouseButton) {
         return this.buttonState & button
     }
 
+    isButtonJustPressed(button: MouseButton) {
+        return (this.buttonState & button) && !(this._lastButtonState & button) 
+    }
+
     updateFromEvent(e: MouseEvent) {
-        this.position.set(e.clientX, e.clientY)
-        this.delta.set(e.movementX, e.movementY)
+        this._position.set(e.clientX, e.clientY)
+        this._delta.set(e.movementX, e.movementY)
         this.buttonState = e.buttons
     }
 
     updateWheelFromEvent(e: WheelEvent) {
-        this.wheelDelta.set(e.deltaX, e.deltaY)
+        this._wheelDelta.set(e.deltaX, e.deltaY)
     }
 
-    clearMovement() {
-        this.delta.set(0, 0)
-        this.wheelDelta.set(0, 0)
+    refresh() {
+        this._delta.set(0, 0)
+        this._wheelDelta.set(0, 0)
+
+        this._lastButtonState = this.buttonState
     }
 }
 
