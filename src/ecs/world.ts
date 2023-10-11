@@ -71,12 +71,12 @@ export class World {
         this.resourceMapping.set(res.name, res)
     }
 
-    getResource<T extends Component>(resource: { new(): T }) {
+    getResource<T extends Component>(resource: { new(...args: any): T }) {
         const res = this.resourceMapping.get(resource.name)
 
         if (res == undefined) throw Error("Query for unregistered resource")
 
-        return res as Component
+        return res as T
     }
 
     registerComponent(component: Component): number {
