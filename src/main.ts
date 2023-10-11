@@ -6,8 +6,9 @@ import { CameraComponent } from "./components/cameraComponent"
 import { InputSystem } from "./systems/inputSystem"
 import { OrbitSystem } from "./systems/orbitSystem"
 import { SceneResource } from "./resources/sceneResource"
-import { CardComponent, CardType } from "./components/cardComponent"
-import { MeshComponent } from "./components/meshComponent"
+import { CardType } from "./components/cardComponent"
+import { SelectionSystem } from "./systems/selectionSystem"
+import { CardAssemblage } from "./assemblages/Card"
 
 export class App {
 
@@ -46,6 +47,7 @@ export class App {
 
     this.world.registerSystem(InputSystem, this.element)
     this.world.registerSystem(OrbitSystem)
+    this.world.registerSystem(SelectionSystem)
   }
 
   get element() {
@@ -54,21 +56,10 @@ export class App {
 
   Start() {
 
+    const cardAssemblage = new CardAssemblage(this.world)
+
     for(let i = 0; i < 10; i++) {
-      const card = this.world.createEntity()
-      const cardComponent = new CardComponent(CardType.BLACK, "TEST")
-
-      const geometry = new THREE.BoxGeometry(2, 0.4, 5)
-      geometry.scale(0.2, 0.2, 0.2)
-      
-      const material = new THREE.MeshBasicMaterial({ color: cardComponent.type as string })
-
-      const meshComponent = new MeshComponent(geometry, material)
-
-      card.addComponent(cardComponent)
-      card.addComponent(meshComponent)
-
-      this.scene.add(meshComponent.mesh)
+      cardAssemblage.create(CardType.BLACK, "TEST")
     }
 
     const mesh = new THREE.BoxGeometry(10, 1, 10)

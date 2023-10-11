@@ -26,6 +26,8 @@ export class CardAssemblage  {
         entity.addComponent(meshComponent)
         entity.addComponent(cardComponent)
 
+        this.scene.add(meshComponent.mesh)
+
         meshComponent.mesh.userData = entity
 
         return entity
