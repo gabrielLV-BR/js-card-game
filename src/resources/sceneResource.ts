@@ -6,9 +6,10 @@ export class SceneResource extends Component {
     public scene: Scene
 
     constructor(
-        scene: Scene
+        [scene]: [Scene]
     ) {
         super(SceneResource.name)
+        
         this.scene = scene
     }
 }

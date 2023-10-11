@@ -14,7 +14,7 @@ export class OrbitSystem extends System {
     inputResource = this.getResource(InputResource)
 
     updateRotation(delta: number, orbit: OrbitComponent) {
-        const { x, y } = this.inputResource.mouse.delta
+        const { x, y } = this.inputResource.mouse._delta
 
         if (this.inputResource.mouse.isButtonPressed(MouseButton.RIGHT) == 0) {
             return;

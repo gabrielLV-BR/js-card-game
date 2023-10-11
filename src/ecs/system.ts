@@ -72,7 +72,7 @@ export abstract class System implements IDisposable{
 
     abstract run(delta: number): void
 
-    getResource<T extends Component>(res: { new() : T }) : T {
+    getResource<T extends Component>(res: { new(...args: any) : T }) : T {
         return this.world.getResource(res) as T
     }
 

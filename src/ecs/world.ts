@@ -67,7 +67,7 @@ export class World {
     }
 
     registerResource<T extends Component>(resource: { new(...args: any): T }, ...args: any) {
-        const res = new resource(this, args)
+        const res = new resource(args)
         this.resourceMapping.set(res.name, res)
     }
 
