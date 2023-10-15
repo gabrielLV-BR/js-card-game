@@ -1,10 +1,12 @@
-import { Camera, Raycaster } from "three";
+import { Raycaster } from "three";
 import { CardComponent } from "../components/cardComponent";
 import { Query, System } from "../ecs/system";
 import { SceneResource } from "../resources/sceneResource";
 import { InputResource, MouseButton } from "../resources/inputResource";
 import { CameraComponent } from "../components/cameraComponent";
 import { UserData } from "../objects/userdata";
+import { Entity } from "../ecs/entity";
+import { SelectedComponent } from "../components/selectedComponent";
 
 export class SelectionSystem extends System {
 
@@ -21,7 +23,7 @@ export class SelectionSystem extends System {
         
     }
 
-    run(delta: number): void {
+    run(_delta: number): void {
         if(!this.inputResource.mouse.isButtonJustPressed(MouseButton.LEFT)) {
             return
         }
@@ -41,7 +43,9 @@ export class SelectionSystem extends System {
             const intersection = this.raycast.intersectObjects(scene.children)
 
             for(const i of intersection) {
-                console.log(i.object);
+                const selectedComponent = new SelectedComponent(i.object)
+                console.log(i.object.userData.world)
+                Entity.prototype.addComponent.call(i.object.userData, selectedComponent)
             }
 
         }
