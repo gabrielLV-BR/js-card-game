@@ -1,4 +1,4 @@
-import { Intersection, Raycaster } from "three";
+import { Intersection, Object3D, Object3DEventMap, Raycaster, Vector2 } from "three";
 import { CardComponent } from "../components/cardComponent";
 import { Query, System } from "../ecs/system";
 import { SceneResource } from "../resources/sceneResource";
@@ -7,68 +7,72 @@ import { CameraComponent } from "../components/cameraComponent";
 import { Entity } from "../ecs/entity";
 import { SelectedComponent } from "../components/selectedComponent";
 
-function intersectionFilter(i: Intersection) {
-    return i.object.userData.world != undefined
+type Object = Object3D<Object3DEventMap>;
+
+function selectObject(object: Object) {
+    const selectedComponent = new SelectedComponent(object)
+    Entity.prototype.addComponent.call(object.userData, selectedComponent)
+}
+
+function deselectObject(object: Object) {
+    Entity.prototype.removeComponent.call(object.userData, SelectedComponent)
 }
 
 export class SelectionSystem extends System {
 
     selectionQuery = new Query(CardComponent)
+    cameraQuery = new Query(CameraComponent)
 
     sceneResource = this.getResource(SceneResource)
     inputResource = this.getResource(InputResource)
 
-    cameraQuery = new Query(CameraComponent)
-
     raycast = new Raycaster()
 
     dispose(): void {
-        
     }
 
-    run(_delta: number): void {
-        let action : "adding" | "removing" = "adding"
+    getIntersection({ camera }: CameraComponent, objects: Object[]): Intersection<Object>[] {
+        const pointer = this.getPointer()
 
-        if(this.inputResource.mouse.isButtonJustPressed(MouseButton.LEFT)) {
-            action = "adding"
-        } else if (this.inputResource.mouse.isButtonJustReleased(MouseButton.LEFT)) {
-            action = "removing"
-        } else {
-            return
-        }
+        this.raycast.setFromCamera(pointer, camera)
 
+        return this.raycast.intersectObjects(objects)
+    }
+
+    getPointer(): Vector2 {
         const pointer = this.inputResource.mouse.position
 
         pointer.x = (pointer.x / innerWidth * 2.0) - 1.0
         pointer.y = (pointer.y / innerHeight * 2.0) - 1.0
 
+        return pointer
+    }
+
+    run(_delta: number): void {
+
+        const mouseState = this.inputResource.mouse
         const scene = this.sceneResource.scene
 
-        for(const entity of this.query(this.cameraQuery)) {
-            const camera = entity.getComponent(CameraComponent).camera
+        let action : (o: Object) => void
 
-            this.raycast.setFromCamera(pointer, camera)
+        if (mouseState.isButtonJustPressed(MouseButton.LEFT)) {
+            action = selectObject
+        } else if (mouseState.isButtonJustReleased(MouseButton.LEFT)) {
+            action = deselectObject
+        } else {
+            return
+        }
 
-            const intersection = this.raycast.intersectObjects(scene.children)
+        for (const entity of this.query(this.cameraQuery)) {
+            const cameraComponent = entity.getComponent(CameraComponent)
+            const children = scene.children
 
-            for(const i of intersection.filter(intersectionFilter)) {
+            const intersection = this.getIntersection(cameraComponent, children)
 
-                const object = i.object;
-                const userData = object.userData
-
-                switch (action) {
-                    case "adding": {
-                        const selectedComponent = new SelectedComponent(object)
-                        Entity.prototype.addComponent.call(userData, selectedComponent)
-                        break
-                    }
-                    case "removing": {
-                        Entity.prototype.removeComponent.call(userData, SelectedComponent)
-                        break
-                    }
-                }
+            for (const { object } of intersection) {
+                if (object.userData.world == undefined) continue
+                action(object)
             }
-
         }
     }
 }
