@@ -1,4 +1,4 @@
-import { Mesh, Object3D, Vector3 } from "three";
+import { Object3D, Vector3 } from "three";
 import { Component } from "../ecs/component";
 
 export class SelectedComponent extends Component {

@@ -1,12 +1,15 @@
-import { Raycaster } from "three";
+import { Intersection, Raycaster } from "three";
 import { CardComponent } from "../components/cardComponent";
 import { Query, System } from "../ecs/system";
 import { SceneResource } from "../resources/sceneResource";
 import { InputResource, MouseButton } from "../resources/inputResource";
 import { CameraComponent } from "../components/cameraComponent";
-import { UserData } from "../objects/userdata";
 import { Entity } from "../ecs/entity";
 import { SelectedComponent } from "../components/selectedComponent";
+
+function intersectionFilter(i: Intersection) {
+    return i.object.userData.world != undefined
+}
 
 export class SelectionSystem extends System {
 
@@ -24,7 +27,13 @@ export class SelectionSystem extends System {
     }
 
     run(_delta: number): void {
-        if(!this.inputResource.mouse.isButtonJustPressed(MouseButton.LEFT)) {
+        let action : "adding" | "removing" = "adding"
+
+        if(this.inputResource.mouse.isButtonJustPressed(MouseButton.LEFT)) {
+            action = "adding"
+        } else if (this.inputResource.mouse.isButtonJustReleased(MouseButton.LEFT)) {
+            action = "removing"
+        } else {
             return
         }
 
@@ -42,10 +51,22 @@ export class SelectionSystem extends System {
 
             const intersection = this.raycast.intersectObjects(scene.children)
 
-            for(const i of intersection) {
-                const selectedComponent = new SelectedComponent(i.object)
-                console.log(i.object.userData.world)
-                Entity.prototype.addComponent.call(i.object.userData, selectedComponent)
+            for(const i of intersection.filter(intersectionFilter)) {
+
+                const object = i.object;
+                const userData = object.userData
+
+                switch (action) {
+                    case "adding": {
+                        const selectedComponent = new SelectedComponent(object)
+                        Entity.prototype.addComponent.call(userData, selectedComponent)
+                        break
+                    }
+                    case "removing": {
+                        Entity.prototype.removeComponent.call(userData, SelectedComponent)
+                        break
+                    }
+                }
             }
 
         }

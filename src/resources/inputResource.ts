@@ -39,6 +39,10 @@ export class MouseState {
         return (this.buttonState & button) && !(this._lastButtonState & button) 
     }
 
+    isButtonJustReleased(button: MouseButton) {
+        return (this.buttonState ^ button) && (this._lastButtonState & button) 
+    }
+
     updateFromEvent(e: MouseEvent) {
         this._position.set(e.clientX, e.clientY)
         this._delta.set(e.movementX, e.movementY)

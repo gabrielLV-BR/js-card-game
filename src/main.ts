@@ -9,6 +9,8 @@ import { SceneResource } from "./resources/sceneResource"
 import { CardType } from "./components/cardComponent"
 import { SelectionSystem } from "./systems/selectionSystem"
 import { CardAssemblage } from "./assemblages/Card"
+import { CardMoveSystem } from "./systems/cardMoveSystem"
+import { SelectedComponent } from "./components/selectedComponent"
 
 export class App {
 
@@ -41,6 +43,8 @@ export class App {
     this.world.registerResource(InputResource)
     this.world.registerResource(SceneResource, this.scene)
 
+    this.world.registerComponent(SelectedComponent)
+
     const player = this.world.createEntity()
     player.addComponent(new OrbitComponent())
     player.addComponent(new CameraComponent(this.camera))
@@ -48,6 +52,7 @@ export class App {
     this.world.registerSystem(InputSystem, this.element)
     this.world.registerSystem(OrbitSystem)
     this.world.registerSystem(SelectionSystem)
+    this.world.registerSystem(CardMoveSystem)
   }
 
   get element() {
